@@ -58,7 +58,6 @@ public class Player {
         if (Jumping) {
             y += velocityY;
             velocityY += gravity;
-
             if (y <= floor) {
                 y = floor;
                 Jumping = false;

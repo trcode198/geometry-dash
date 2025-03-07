@@ -1,9 +1,11 @@
 package io.github.some_example_name;
 
-public class Platform {
+import com.badlogic.gdx.utils.Array;
+
+public class Platform extends Array<Platform> {
     private float x, y;
     private float width, height;
-    private float scrollSpd = 3;
+    private float scrollSpd = 7;
 
     public Platform(float x, float y, float width, float height) {
         this.x = x;

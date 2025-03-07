@@ -1,0 +1,47 @@
+@Override
+public void render() {
+    // Update the platform timer to manage platform creation
+    platformTimer += Gdx.graphics.getDeltaTime();
+
+    // Create new platforms if there are fewer platforms than maxPlatforms
+    if (platforms.size < maxPlatforms && platformTimer >= platformTGap) {
+        float platformX;
+
+        // For the first platform, position it off-screen to the right
+        if (platforms.size == 0) {
+            platformX = Gdx.graphics.getWidth() + platformIntervals[0];
+        }
+        // For subsequent platforms, position them relative to the last platform, all off-screen
+        else {
+            platformX = platforms.peek().getX() + platformIntervals[platforms.size];
+        }
+
+        // Add the new platform with calculated position
+        platforms.add(new Platform(platformX, 100, 100, 20));
+
+        // Reset the timer after creating a platform
+        platformTimer = 0;
+    }
+
+    // Update existing platforms
+    for (Platform platform : platforms) {
+        platform.update();
+    }
+
+    // Update the player
+    player.update();
+    player.checkPlatforms(platforms);
+
+    // Render the player and platforms
+    sr.begin(ShapeRenderer.ShapeType.Filled);
+
+    // Draw all platforms
+    for (Platform platform : platforms) {
+        sr.rect(platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight());
+    }
+
+    // Draw the player
+    sr.rect(player.getX(), player.getY(), player.getSize(), player.getSize());
+
+    sr.end();
+}
