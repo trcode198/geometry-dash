@@ -1,21 +1,26 @@
 package io.github.some_example_name;
 
+import com.badlogic.gdx.utils.Array;
+
 public class Player {
     private int x, y;
     private int size;
     private double velocityY;
-    private boolean isJumping;
+    private boolean Jumping;
     private double gravity = -0.876;
     private final int jumpStrength = 15;
-    private final int groundLevel;
+    private final int floor;
+    private boolean onPlatform;
 
     public Player(int x, int y, int size) {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.groundLevel = y;
+        this.floor = y;
         this.velocityY = 0;
-        this.isJumping = false;
+        this.Jumping = false;
+        this.onPlatform = false;
+
     }
 
     public int getX() {
@@ -43,21 +48,43 @@ public class Player {
     }
 
     public void jump() {
-        if (!isJumping) {
-            isJumping = true;
+        if (!Jumping) {
+            Jumping = true;
             velocityY = jumpStrength;
         }
     }
 
     public void update() {
-        if (isJumping) {
+        if (Jumping) {
             y += velocityY;
             velocityY += gravity;
-            if (y <= groundLevel) {
-                y = groundLevel;
-                isJumping = false;
+
+            if (y <= floor) {
+                y = floor;
+                Jumping = false;
                 velocityY = 0;
             }
+        }
+    }
+
+    public void checkPlatforms(Array<Platform> platforms) {
+        onPlatform = false;
+
+        for (Platform platform : platforms) {
+            if (platform.Collision(this)) {
+                if (velocityY <= 0 && y + size > platform.getY()) {
+                    y = (int) (platform.getY() + platform.getHeight());
+                    Jumping = false;
+                    velocityY = 0;
+                    onPlatform = true;
+                    break;
+                }
+            }
+        }
+
+        if (!onPlatform && !Jumping && y > floor) {
+            Jumping = true;
+            velocityY = 0;
         }
     }
 }
