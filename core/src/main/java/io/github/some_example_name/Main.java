@@ -41,7 +41,7 @@ public class Main extends ApplicationAdapter {
         platformTimer += deltaTime;
         if (platformTimer >= platformspawn) {
             platformTimer = 0;
-            int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-50;
+            int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-50);
             int platformWidth = MathUtils.random(80, 200);
             float platformSpeed = 3f;
 
