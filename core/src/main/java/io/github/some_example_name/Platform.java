@@ -1,44 +1,44 @@
 package io.github.some_example_name;
 
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Rectangle;
 
-public class Platform extends Array<Platform> {
-    private float x, y;
-    private float width, height;
-    private float scrollSpd = 7;
+public class Platform {
+    private float x;
+    private float y;
+    private float width;
+    private float height;
+    private float speed;
 
-    public Platform(float x, float y, float width, float height) {
+    public Platform(float x, float y, float width, float height, float speed) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.speed = speed;
     }
 
-    public void update() {
-        x -= scrollSpd;
+    public void update(float deltaTime) {
+        x -= speed * 60 * deltaTime;
     }
 
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
     }
+
     public float getWidth() {
         return width;
     }
+
     public float getHeight() {
         return height;
     }
 
-
-
-    public boolean Collision(Player player) {
-        return player.getX() < x + width &&
-            player.getX() + player.getSize() > x &&
-            player.getY() < y + height &&
-            player.getY() + player.getSize() > y;
+    public Rectangle getEdges() {
+        return new Rectangle(x, y, width, height);
     }
-
-
 }
+
