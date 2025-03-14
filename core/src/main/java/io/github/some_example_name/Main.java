@@ -14,7 +14,7 @@ public class Main extends ApplicationAdapter {
     private Player player;
     private Array<Platform> platforms;
     private float platformTimer;
-    private final float platformspawn = 2f;
+    private final float platformspawn = 1f;
     private final int screenW = 1980;
     private final int screenH = 1080;
     private final int groundH = 200;
@@ -26,7 +26,7 @@ public class Main extends ApplicationAdapter {
 
         platforms = new Array<>();
         platformTimer = 0;
-        platforms.add(new Platform(screenW, 300, 120, 20, 3));
+        platforms.add(new Platform(screenW, 300, 120, 20, 4));
     }
 
     @Override
@@ -41,9 +41,9 @@ public class Main extends ApplicationAdapter {
         platformTimer += deltaTime;
         if (platformTimer >= platformspawn) {
             platformTimer = 0;
-            int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-50);
+            int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-100);
             int platformWidth = MathUtils.random(80, 200);
-            float platformSpeed = 3f;
+            float platformSpeed = 4f;
 
             platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
         }
@@ -63,8 +63,10 @@ public class Main extends ApplicationAdapter {
         sr.setColor(255, 140, 0, 255);
         sr.rect(player.getX(), player.getY(), player.getSize(), player.getSize());
         // ground
-        sr.setColor(Color.valueOf("1a0355"));
+        sr.setColor(Color.valueOf("ffffff"));
         sr.rect(0, 0, screenW, groundH);
+        sr.setColor(Color.valueOf("0a0644"));
+        sr.rect(0, 0, screenW, groundH-1);
         // plat
         sr.setColor(Color.valueOf("55c4ee"));
         for (Platform platform : platforms) {
