@@ -14,11 +14,16 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer sr;
     private Player player;
     private Array<Platform> platforms;
+    private Array<Spike> spikes;
     private float platformTimer;
+    private float spikeTimer;
+    private float spikespawn = 2f;
     private final float platformspawn = 1f;
     private final int screenW = 1980;
     private final int screenH = 1080;
     private final int groundH = 200;
+    private final int playerStartX = 140;
+    private final int playerStartY = 200;
     private Matrix4 defaultMatrix;
 
     @Override
@@ -36,18 +41,49 @@ public class Main extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
         ScreenUtils.clear(0.01f, 0f, 0.5f, 1f);
 
+        handleInput();
+        updatePlatforms(deltaTime);
+        updateSpikes(deltaTime);
+        player.update(deltaTime, platforms, groundH);
+        checkSpikeCollisions();
+
+        drawGame();
+    }
+
+    private void checkSpikeCollisions() {
+
+    }
+
+    private void updateSpikes(float deltaTime) {
+        spikeTimer += deltaTime;
+        if (spikeTimer > spikespawn) {
+            spawnNewSpike();
+        }
+        for (int i = spikes.size -1; i >= 0; i--) {
+            Spike
+        }
+
+    }
+
+    private void resetGame() {
+        player = new Player(playerStartX, playerStartY, 44);
+        platforms = new Array<>();
+        spikes = new Array<>();
+        platformTimer = 0;
+        spikeTimer = 0;
+        platforms.add(new Platform(screenW, 300, 120, 20, 5));
+    }
+
+    private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             player.jump();
         }
+    }
 
+    private void updatePlatforms(float deltaTime) {
         platformTimer += deltaTime;
         if (platformTimer >= platformspawn) {
-            platformTimer = 0;
-            int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-100);
-            int platformWidth = MathUtils.random(80, 210);
-            float platformSpeed = 5f;
-
-            platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
+            spawnNewPlatform();
         }
 
         for (int i = platforms.size - 1; i >= 0; i--) {
@@ -58,59 +94,77 @@ public class Main extends ApplicationAdapter {
                 platforms.removeIndex(i);
             }
         }
-        player.update(deltaTime, platforms, groundH);
+    }
 
+    private void spawnNewPlatform() {
+        platformTimer = 0;
+        int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-100);
+        int platformWidth = MathUtils.random(80, 210);
+        float platformSpeed = 5f;
+
+        platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
+    }
+
+    private void drawGame() {
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
-        // ground
+        drawGround();
+        drawPlatforms();
+        drawPlayer();
+
+        sr.end();
+    }
+
+    private void drawGround() {
         sr.setColor(Color.valueOf("ffffff"));
         sr.rect(0, 0, screenW, groundH);
         sr.setColor(Color.valueOf("0a0644"));
         sr.rect(0, 0, screenW, groundH-1);
+    }
 
-        // platforms
+    private void drawPlatforms() {
         sr.setColor(Color.valueOf("55c4ee"));
         for (Platform platform : platforms) {
             sr.rect(platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight());
         }
+    }
 
-        // Save the current transformation matrix
+    private void drawPlayer() {
         defaultMatrix = sr.getTransformMatrix().cpy();
 
-        // Draw player using triangles
         float playerCenterX = player.getX() + player.getSize() / 2;
         float playerCenterY = player.getY() + player.getSize() / 2;
         float size = player.getSize();
 
-        // Create a new matrix for player transformation
-        Matrix4 playerMatrix = new Matrix4();
-        playerMatrix.setToTranslation(playerCenterX, playerCenterY, 0);
-        playerMatrix.rotate(0, 0, 1, player.getRotation());
-
-        // Apply player transformation
+        Matrix4 playerMatrix = createPlayerMatrix(playerCenterX, playerCenterY, player.getRotation());
         sr.setTransformMatrix(playerMatrix);
 
-        // Draw player using two triangles forming a square
+        drawPlayerSquare(size);
+
+        sr.setTransformMatrix(defaultMatrix);
+    }
+
+    private Matrix4 createPlayerMatrix(float centerX, float centerY, float rotation) {
+        Matrix4 matrix = new Matrix4();
+        matrix.setToTranslation(centerX, centerY, 0);
+        matrix.rotate(0, 0, 1, rotation);
+        return matrix;
+    }
+
+    private void drawPlayerSquare(float size) {
         sr.setColor(255, 140, 0, 255);
 
-        // First triangle (bottom-left, bottom-right, top-right)
         sr.triangle(
-            -size/2, -size/2,  // bottom-left
-            size/2, -size/2,   // bottom-right
-            size/2, size/2     // top-right
+            -size/2, -size/2,
+            size/2, -size/2,
+            size/2, size/2
         );
 
-        // Second triangle (bottom-left, top-right, top-left)
         sr.triangle(
-            -size/2, -size/2,  // bottom-left
-            size/2, size/2,    // top-right
-            -size/2, size/2    // top-left
+            -size/2, -size/2,
+            size/2, size/2,
+            -size/2, size/2
         );
-
-        // Restore the original transformation matrix
-        sr.setTransformMatrix(defaultMatrix);
-
-        sr.end();
     }
 
     @Override
