@@ -19,7 +19,7 @@ public class Main extends ApplicationAdapter {
     private Array<Spike> spikes;
     private float platformTimer;
     private float spikeTimer;
-    private float spikespawn = 2f;
+    private float spikespawn = 1.4f;
     private final float platformspawn = 1f;
     private final int screenW = 1980;
     private final int screenH = 1080;
@@ -31,11 +31,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         sr = new ShapeRenderer();
-        player = new Player(140, groundH, 44);
-
-        platforms = new Array<>();
-        platformTimer = 0;
-        platforms.add(new Platform(screenW, 300, 120, 20, 5));
+        resetGame();
     }
 
     @Override
@@ -50,6 +46,16 @@ public class Main extends ApplicationAdapter {
         checkSpikeCollisions();
 
         drawGame();
+    }
+    private void resetGame() {
+        player = new Player(playerStartX, playerStartY, 44);
+
+        platforms = new Array<>();
+        spikes = new Array<>();
+        platformTimer = 0;
+        spikeTimer = 0;
+
+        platforms.add(new Platform(screenW, 300, 120, 20, 5));
     }
 
 
@@ -70,7 +76,7 @@ public class Main extends ApplicationAdapter {
 
     private void spawnNewSpike() {
         spikeTimer = 0;
-        if ((random.nextInt(1)) < 0.7f ) {
+        if ((random.nextInt(1)) < 0.6f ) {
             int spikeWidth = MathUtils.random(30, 40);
             int spikeHeight = MathUtils.random(30, 50);
             float spikeSpeed = 5f;
@@ -85,15 +91,6 @@ public class Main extends ApplicationAdapter {
                 return;
             }
         }
-    }
-
-    private void resetGame() {
-        player = new Player(playerStartX, playerStartY, 44);
-        platforms = new Array<>();
-        spikes = new Array<>();
-        platformTimer = 0;
-        spikeTimer = 0;
-        platforms.add(new Platform(screenW, 300, 120, 20, 5));
     }
 
     private void handleInput() {
@@ -121,11 +118,13 @@ public class Main extends ApplicationAdapter {
     private void spawnNewPlatform() {
         platformTimer = 0;
         int platformHeight = random(groundH + 50, (screenH / 2)-100);
-        int platformWidth = random(80, 210);
+        int platformWidth = random(120, 210);
         float platformSpeed = 5f;
 
         platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
     }
+
+
 
     private void drawGame() {
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -153,7 +152,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void drawSpikes() {
-        sr.setColor(Color.valueOf("ffffff"));
+        sr.setColor(Color.valueOf("ff0000"));
         for (Spike spike : spikes) {
             float x = spike.getX();
             float y = spike.getY();
