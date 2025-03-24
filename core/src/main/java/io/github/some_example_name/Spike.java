@@ -1,4 +1,3 @@
-// First, create a new Spike class
 package io.github.some_example_name;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -39,7 +38,7 @@ public class Spike {
     }
 
     public Rectangle getEdges() {
-        float collisionShrink = width * 0.15f;
-        return new Rectangle(x + collisionShrink, y, width - (collisionShrink * 2), height);
+        float collisionW = width * 0.2f;
+        return new Rectangle(x + collisionW, y, width - (collisionW * 2), height);
     }
 }

@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.MathUtils;
 
+import static com.badlogic.gdx.math.MathUtils.random;
+
 public class Main extends ApplicationAdapter {
     private ShapeRenderer sr;
     private Player player;
@@ -50,9 +52,6 @@ public class Main extends ApplicationAdapter {
         drawGame();
     }
 
-    private void checkSpikeCollisions() {
-
-    }
 
     private void updateSpikes(float deltaTime) {
         spikeTimer += deltaTime;
@@ -60,9 +59,32 @@ public class Main extends ApplicationAdapter {
             spawnNewSpike();
         }
         for (int i = spikes.size -1; i >= 0; i--) {
-            Spike
-        }
+            Spike spike = spikes.get(i);
+            spike.update(deltaTime);
 
+            if (spike.getX() + spike.getWidth() < 0) {
+                spikes.removeIndex(i);
+            }
+        }
+    }
+
+    private void spawnNewSpike() {
+        spikeTimer = 0;
+        if ((random.nextInt(1)) < 0.7f ) {
+            int spikeWidth = MathUtils.random(30, 40);
+            int spikeHeight = MathUtils.random(30, 50);
+            float spikeSpeed = 5f;
+            spikes.add(new Spike(screenW, groundH, spikeWidth, spikeHeight, spikeSpeed));
+        }
+    }
+
+    private void checkSpikeCollisions() {
+        for (Spike spike : spikes) {
+            if (player.getEdges().overlaps(spike.getEdges())) {
+                resetGame();
+                return;
+            }
+        }
     }
 
     private void resetGame() {
@@ -98,8 +120,8 @@ public class Main extends ApplicationAdapter {
 
     private void spawnNewPlatform() {
         platformTimer = 0;
-        int platformHeight = MathUtils.random(groundH + 50, (screenH / 2)-100);
-        int platformWidth = MathUtils.random(80, 210);
+        int platformHeight = random(groundH + 50, (screenH / 2)-100);
+        int platformWidth = random(80, 210);
         float platformSpeed = 5f;
 
         platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
@@ -111,6 +133,7 @@ public class Main extends ApplicationAdapter {
         drawGround();
         drawPlatforms();
         drawPlayer();
+        drawSpikes();
 
         sr.end();
     }
@@ -126,6 +149,20 @@ public class Main extends ApplicationAdapter {
         sr.setColor(Color.valueOf("55c4ee"));
         for (Platform platform : platforms) {
             sr.rect(platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight());
+        }
+    }
+
+    private void drawSpikes() {
+        sr.setColor(Color.valueOf("ffffff"));
+        for (Spike spike : spikes) {
+            float x = spike.getX();
+            float y = spike.getY();
+            float width = spike.getWidth();
+            float height = spike.getHeight();
+            sr.triangle(
+                x, y,
+                x+width, y,
+                x+(width/2), y + height);
         }
     }
 
