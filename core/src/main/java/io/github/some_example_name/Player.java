@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
+    private final Array<Object> trails;
     private float x, y;
     private int size;
     private float velocityY;
@@ -20,6 +21,7 @@ public class Player {
         this.size = size;
         this.velocityY = 0;
         this.isJumping = false;
+        this.trails = new Array<>();
     }
 
     public float getRotation() {

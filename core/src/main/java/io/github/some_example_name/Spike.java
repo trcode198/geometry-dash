@@ -1,6 +1,7 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 public class Spike {
     private float x;
@@ -16,6 +17,10 @@ public class Spike {
         this.height = height;
         this.speed = speed;
     }
+
+    private Array<Trail> trails;
+    private float trialTimer = 0;
+    private static final float trailSpawnGap = 0.05f;
 
     public void update(float deltaTime) {
         x -= speed * 60 * deltaTime;

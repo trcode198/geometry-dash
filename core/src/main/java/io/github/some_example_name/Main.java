@@ -17,16 +17,11 @@ public class Main extends ApplicationAdapter {
     private Player player;
     private Array<Platform> platforms;
     private Array<Spike> spikes;
+    private Array<Trail> trails;
     private float platformTimer;
     private float spikeTimer;
-    private float spikespawn = 1.4f;
-    private final float platformspawn = 1f;
     private final int screenW = 1980;
-    private final int screenH = 1080;
     private final int groundH = 200;
-    private final int playerStartX = 140;
-    private final int playerStartY = 200;
-    private Matrix4 defaultMatrix;
 
     @Override
     public void create() {
@@ -48,6 +43,8 @@ public class Main extends ApplicationAdapter {
         drawGame();
     }
     private void resetGame() {
+        int playerStartX = 140;
+        int playerStartY = 200;
         player = new Player(playerStartX, playerStartY, 44);
 
         platforms = new Array<>();
@@ -55,12 +52,13 @@ public class Main extends ApplicationAdapter {
         platformTimer = 0;
         spikeTimer = 0;
 
-        platforms.add(new Platform(screenW, 300, 120, 20, 5));
+        platforms.add(new Platform(screenW, 300, 120, 20, 6));
     }
 
 
     private void updateSpikes(float deltaTime) {
         spikeTimer += deltaTime;
+        float spikespawn = 0.5f;
         if (spikeTimer > spikespawn) {
             spawnNewSpike();
         }
@@ -76,10 +74,10 @@ public class Main extends ApplicationAdapter {
 
     private void spawnNewSpike() {
         spikeTimer = 0;
-        if ((random.nextInt(1)) < 0.6f ) {
+        if ((random.nextFloat(1)) > 0.6f ) {
             int spikeWidth = MathUtils.random(30, 40);
             int spikeHeight = MathUtils.random(30, 50);
-            float spikeSpeed = 5f;
+            float spikeSpeed = 6f;
             spikes.add(new Spike(screenW, groundH, spikeWidth, spikeHeight, spikeSpeed));
         }
     }
@@ -97,10 +95,14 @@ public class Main extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             player.jump();
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            player.jump();
+        }
     }
 
     private void updatePlatforms(float deltaTime) {
         platformTimer += deltaTime;
+        float platformspawn = 1f;
         if (platformTimer >= platformspawn) {
             spawnNewPlatform();
         }
@@ -117,9 +119,10 @@ public class Main extends ApplicationAdapter {
 
     private void spawnNewPlatform() {
         platformTimer = 0;
+        int screenH = 1080;
         int platformHeight = random(groundH + 50, (screenH / 2)-100);
         int platformWidth = random(120, 210);
-        float platformSpeed = 5f;
+        float platformSpeed = 6f;
 
         platforms.add(new Platform(screenW, platformHeight, platformWidth, 20, platformSpeed));
     }
@@ -166,10 +169,10 @@ public class Main extends ApplicationAdapter {
     }
 
     private void drawPlayer() {
-        defaultMatrix = sr.getTransformMatrix().cpy();
+        Matrix4 defaultMatrix = sr.getTransformMatrix().cpy();
 
-        float playerCenterX = player.getX() + player.getSize() / 2;
-        float playerCenterY = player.getY() + player.getSize() / 2;
+        float playerCenterX = player.getX() + (float) player.getSize() / 2;
+        float playerCenterY = player.getY() + (float) player.getSize() / 2;
         float size = player.getSize();
 
         Matrix4 playerMatrix = createPlayerMatrix(playerCenterX, playerCenterY, player.getRotation());
